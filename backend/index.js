@@ -108,9 +108,9 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        if (user.status === 'unverified') {
-            return res.status(403).json({ error: 'Please confirm your email' });
-        }
+        // if (user.status === 'unverified') {
+        //     return res.status(403).json({ error: 'Please confirm your email' });
+        // }
 
         if (user.status === 'blocked') {
             return res.status(403).json({ error: 'User is blocked' });
