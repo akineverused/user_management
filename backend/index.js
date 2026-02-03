@@ -12,7 +12,10 @@ app.use(cors());
 app.use(express.json());
 
 const checkUser = async (req, res, next) => {
+    console.log('HEADERS:', req.headers);
     const userId = req.headers['x-user-id'];
+    console.log('USER ID HEADER:', userId);
+
 
     if (!userId) {
         return res.status(401).json({ error: 'No user' });

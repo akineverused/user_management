@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Navigate, Route, Routes} from "react-router-dom";
 import {privateRoutes, publicRoutes} from "./routes.jsx";
+import {useAuth} from "../context/AuthContext.jsx";
 
 const AppRouter = () => {
-    const isAuth = true ;
+    const { isAuth } = useAuth();
 
     const renderRoutes = (routes) =>
         routes.map(({ path, component }) => (
