@@ -1,24 +1,20 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 
-export const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const sendConfirmationEmail = async (email, token) => {
     const link = `${process.env.BACKEND_URL}/confirm/${token}`;
 
-    await transporter.sendMail({
-        from: `"User Management" <${process.env.EMAIL_USER}>`,
+    await sgMail.send({
         to: email,
+        from: process.env.FROM_EMAIL,
         subject: 'Confirm your email',
         html: `
       <h3>Confirm your registration</h3>
-      <p>Click the link below to activate your account:</p>
+      <p>Click the link below:</p>
       <a href="${link}">${link}</a>
     `
     });
+
+    console.log('Confirmation email sent to', email);
 };
