@@ -1,0 +1,10 @@
+.wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.card{
+    max-width: 360px;
+    min-width: 360px;
+}
