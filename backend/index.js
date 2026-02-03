@@ -55,12 +55,18 @@ app.post('/register', async (req, res) => {
             [name, email, hash, token]
         );
 
+        console.log('REGISTER: start');
+
         sendConfirmationEmail(email, token)
-            .catch(err => console.error('Email error:', err));
+            .then(() => console.log('REGISTER: email send function resolved'))
+            .catch(err => console.error('REGISTER: email send error', err));
+
+
 
         res.json({
             message: 'Registered successfully. Please check your email.'
         });
+        console.log('REGISTER: response sent');
 
     } catch (e) {
         if (e.code === '23505') {
