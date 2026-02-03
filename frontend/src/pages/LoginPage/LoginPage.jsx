@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import cl from './Loginpage.module.css'
 import { Button, Card, Form, Input, Typography } from 'antd';
-import { login, register } from '../../api/users.api.js';
+import { login as loginRequest, register } from '../../api/users.api.js';
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.jsx";
 
@@ -15,7 +15,7 @@ const LoginPage = () => {
     const onFinish = async (values) => {
         try {
             if (mode === 'login') {
-                const res = await login(values.email, values.password);
+                const res = await loginRequest(values.email, values.password);
                 login(res.data.userId);
             } else {
                 await register(values.name, values.email, values.password);

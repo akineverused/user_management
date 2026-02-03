@@ -3,7 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
 import { pool } from './db.js';
-
+import crypto from 'crypto';
+import { sendConfirmationEmail } from './mailer.js';
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -46,23 +47,50 @@ app.post('/register', async (req, res) => {
 
     try {
         const hash = await bcrypt.hash(password, 10);
+        const token = crypto.randomUUID();
 
         await pool.query(
-            `INSERT INTO users (name, email, password)
-       VALUES ($1, $2, $3)`,
-            [name, email, hash]
+            `INSERT INTO users (name, email, password, status, confirmation_token)
+       VALUES ($1, $2, $3, 'unverified', $4)`,
+            [name, email, hash, token]
         );
 
-        res.json({ message: 'Registered successfully' });
+        sendConfirmationEmail(email, token)
+            .catch(err => console.error('Email error:', err));
+
+        res.json({
+            message: 'Registered successfully. Please check your email.'
+        });
 
     } catch (e) {
         if (e.code === '23505') {
             return res.status(400).json({ error: 'Email already exists' });
         }
-
         console.error(e);
         res.status(500).json({ error: 'Server error' });
     }
+});
+
+app.get('/confirm/:token', async (req, res) => {
+    const { token } = req.params;
+
+    const result = await pool.query(
+        `UPDATE users
+     SET status = 'active',
+         confirmation_token = NULL
+     WHERE confirmation_token = $1
+       AND status = 'unverified'
+     RETURNING id`,
+        [token]
+    );
+
+    if (!result.rowCount) {
+        return res.status(400).send(
+            'Invalid link or account already confirmed / blocked'
+        );
+    }
+
+    res.send('Email confirmed successfully. You can now log in.');
 });
 
 app.post('/login', async (req, res) => {
@@ -78,6 +106,10 @@ app.post('/login', async (req, res) => {
 
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        if (user.status === 'unverified') {
+            return res.status(403).json({ error: 'Please confirm your email' });
         }
 
         if (user.status === 'blocked') {
@@ -142,6 +174,14 @@ app.post('/delete', checkUser, async (req, res) => {
     await pool.query(
         `DELETE FROM users WHERE id = ANY($1)`,
         [ids]
+    );
+
+    res.json({ ok: true });
+});
+
+app.post('/delete-unverified', checkUser, async (req, res) => {
+    await pool.query(
+        `DELETE FROM users WHERE status = 'unverified'`
     );
 
     res.json({ ok: true });
