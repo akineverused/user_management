@@ -17,3 +17,6 @@ export const unblockUsers = (ids) =>
 
 export const deleteUsers = (ids) =>
     api.post('/delete', { ids });
+
+export const deleteUnverified = () =>
+    api.post('/delete-unverified');

@@ -1,13 +1,12 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Space, Table, Typography } from 'antd';
-import { getUsers, blockUsers, unblockUsers, deleteUsers } from '../../api/users.api.js';
-import {useNavigate} from "react-router-dom";
+import {getUsers, blockUsers, unblockUsers, deleteUsers, deleteUnverified} from '../../api/users.api.js';
 import {useAuth} from "../../context/AuthContext.jsx";
 
 const { Title } = Typography;
 
-const UsersPage = () => {
+export const UsersPage = () => {
     const [users, setUsers] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -52,6 +51,11 @@ const UsersPage = () => {
         console.log('Users deleted');
         await loadUsers();
     };
+    const onDeleteUnverified = async () => {
+        await deleteUnverified();
+        console.log('Unverified users deleted');
+        await loadUsers();
+    };
 
     return (
         <div style={{ padding: 24 }}>
@@ -89,6 +93,7 @@ const UsersPage = () => {
                 </Button>
                 <Button
                     disabled={!selectedRowKeys.length}
+                    onClick={onDeleteUnverified}
                 >
                     Delete unverified
                 </Button>
@@ -106,5 +111,3 @@ const UsersPage = () => {
         </div>
     );
 };
-
-export default UsersPage;

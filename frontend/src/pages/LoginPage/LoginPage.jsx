@@ -2,14 +2,12 @@ import React, {useState} from 'react';
 import cl from './Loginpage.module.css'
 import { Button, Card, Form, Input, Typography } from 'antd';
 import { login as loginRequest, register } from '../../api/users.api.js';
-import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.jsx";
 
 const { Title, Text } = Typography;
 
-const LoginPage = () => {
+export const LoginPage = () => {
     const [mode, setMode] = useState('login');
-    const navigate = useNavigate();
     const { login } = useAuth();
 
     const onFinish = async (values) => {
@@ -29,7 +27,7 @@ const LoginPage = () => {
     return (
         <div className={cl.wrap}>
             <Card className={cl.card}>
-                <Title level={3} style={{ textAlign: 'center' }}>
+                <Title level={3}>
                     {mode === 'login' ? 'Sign in' : 'Sign up'}
                 </Title>
                 <Form
@@ -58,7 +56,6 @@ const LoginPage = () => {
                     >
                         <Input placeholder="email@example.com" />
                     </Form.Item>
-
                     <Form.Item
                         label="Password"
                         name="password"
@@ -68,7 +65,6 @@ const LoginPage = () => {
                     >
                         <Input.Password placeholder="Password" />
                     </Form.Item>
-
                     <Form.Item>
                         <Button
                             type="primary"
@@ -79,13 +75,12 @@ const LoginPage = () => {
                         </Button>
                     </Form.Item>
                 </Form>
-                <Form.Item style={{ marginBottom: 0 }}>
+                <Form.Item>
                     <Text>
                         {mode === 'login'
                             ? "Don't have an account?"
                             : 'Already have an account?'}
                     </Text>
-
                     <Button
                         type="link"
                         onClick={() =>
@@ -99,5 +94,3 @@ const LoginPage = () => {
         </div>
     );
 };
-
-export default LoginPage;
