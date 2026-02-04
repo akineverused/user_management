@@ -36,8 +36,10 @@ export const UsersPage = () => {
 
     const onBlock = async () => {
         await blockUsers(selectedRowKeys);
+        if (selectedRowKeys.includes(Number(localStorage.getItem('userId')))){
+            logout();
+        } else await loadUsers();
         console.log('Users blocked');
-        await loadUsers();
     };
 
     const onUnblock = async () => {
@@ -48,13 +50,17 @@ export const UsersPage = () => {
 
     const onDelete = async () => {
         await deleteUsers(selectedRowKeys);
+        if (selectedRowKeys.includes(Number(localStorage.getItem('userId')))){
+            logout();
+        } else await loadUsers();
         console.log('Users deleted');
-        await loadUsers();
     };
     const onDeleteUnverified = async () => {
         await deleteUnverified();
+        if (selectedRowKeys.includes(Number(localStorage.getItem('userId')))){
+            logout();
+        } else await loadUsers();
         console.log('Unverified users deleted');
-        await loadUsers();
     };
 
     return (
