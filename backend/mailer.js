@@ -17,4 +17,5 @@ export const sendConfirmationEmail = async (email, token) => {
     });
 
     console.log('Confirmation email sent to', email);
+    console.log('Click the link below:', link)
 };
